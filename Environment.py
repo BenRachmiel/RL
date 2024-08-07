@@ -10,6 +10,7 @@ class SimpleEnvironment:
         self.target = np.zeros(2)
         self.orientation = 0.0
         self.done = False
+        self.initial_distance = 0.0
         self._randomize_positions()
 
     def _randomize_positions(self):
@@ -20,6 +21,7 @@ class SimpleEnvironment:
             distance = np.linalg.norm(self.target - self.position)
             if distance >= min_distance:
                 break
+        self.initial_distance = distance
 
     def reset(self):
         self._randomize_positions()
@@ -32,6 +34,9 @@ class SimpleEnvironment:
 
     def step(self, action):
         """Execute the action and update the agent's position."""
+        if self.done:
+            self.reset()
+            self.done = False
         # Continuous actions: action is a scalar indicating the angular change
         self.orientation += action * self.angular_velocity
 
@@ -42,14 +47,16 @@ class SimpleEnvironment:
         # Clip the position to stay within the defined area
         self.position = np.clip(self.position, 0, self.area_size[0])
 
-        # Calculate the distance to the target
-        distance_to_target = np.linalg.norm(self.target - self.position)
+        # Calculate the current distance to the target
+        current_distance = np.linalg.norm(self.target - self.position)
 
-        # Reward system: Give a reward when reaching the target, and reposition the target
-        if distance_to_target < 0.1:
-            reward = 100  # Reward for reaching the target
-            self.target = np.random.uniform(0, self.area_size[0], size=2)  # New target position
+        # Determine the reward
+        if current_distance < 1:
+            reward = 10000  # Reward for reaching the target
+            self.done = True
+        elif current_distance < self.initial_distance:
+            reward = 30 - 0.1*(current_distance - min(50.0, self.initial_distance))  # Reward for getting closer to the target than initial distance
         else:
-            reward = -distance_to_target  # Negative reward to minimize distance
+            reward = -30  # Penalty for getting farther from the target than initial distance
 
         return self.get_state(), reward, self.done
