@@ -38,8 +38,6 @@ def train_agent(agent, env, episodes=10000, scenarios_per_episode=5, max_steps=1
                 print(f"New best episode {episode}: Total Reward = {total_episode_reward:.2f}")
                 gif_visual(positions, orientations, targets, episode)
 
-        if episode % 100 == 0:
-            print(f"Episode {episode}: Total Reward = {total_episode_reward:.2f}")
         if episode % 500 == 499:
             gif_visual(positions, orientations, targets, episode)
 
