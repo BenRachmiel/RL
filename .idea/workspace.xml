@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="134a822b-b1b0-4fd2-9d7d-e8470a965525" name="Changes" comment="Initial project idea">
+    <list default="true" id="134a822b-b1b0-4fd2-9d7d-e8470a965525" name="Changes" comment="Increased speed, smarter saving, visualization every 500 episodes.">
+      <change afterPath="$PROJECT_DIR$/DQN.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Visualization.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Environment.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train.py" afterDir="false" />
@@ -94,11 +96,20 @@
       <option name="project" value="LOCAL" />
       <updated>1723014084764</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Increased speed, smarter saving, visualization every 500 episodes.">
+      <option name="closed" value="true" />
+      <created>1723027089889</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1723027089889</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial project idea" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial project idea" />
+    <MESSAGE value="Increased speed, smarter saving, visualization every 500 episodes." />
+    <option name="LAST_COMMIT_MESSAGE" value="Increased speed, smarter saving, visualization every 500 episodes." />
   </component>
 </project>

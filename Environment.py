@@ -34,6 +34,9 @@ class SimpleEnvironment:
 
     def step(self, action):
         """Execute the action and update the agent's position."""
+        if self.done:
+            self.reset()
+            self.done = False
         # Continuous actions: action is a scalar indicating the angular change
         self.orientation += action * self.angular_velocity
 
@@ -48,8 +51,8 @@ class SimpleEnvironment:
         current_distance = np.linalg.norm(self.target - self.position)
 
         # Determine the reward
-        if current_distance < 0.1:
-            reward = 100  # Reward for reaching the target
+        if current_distance < 1:
+            reward = 10000  # Reward for reaching the target
             self.done = True
         elif current_distance < self.initial_distance:
             reward = 30 - 0.1*(current_distance - min(50.0, self.initial_distance))  # Reward for getting closer to the target than initial distance
