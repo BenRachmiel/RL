@@ -108,7 +108,7 @@ agent = DQNAgent(state_dim, action_dim)
 
 # Training parameters
 episodes = 10000
-env = SimpleEnvironment(speed=0.1, angular_velocity=0.1, area_size=(100, 100))
+env = SimpleEnvironment(speed=0.5, angular_velocity=0.1, area_size=(100, 100))
 
 # Load existing model if available
 agent.load_model("best.pth")
@@ -192,11 +192,14 @@ for episode in range(episodes):
 
     if total_reward > best_reward:
         best_reward = total_reward
-        if episode >= min(episodes / 2, 500):
+        if episode >= min(episodes / 2, 50):
             agent.save_model("best.pth")
+            print(f"New best episode {episode}: Total Reward = {total_reward:.2f}")
             visualize_attempts_as_gif(positions, orientations, targets, episode)
 
     if episode % 100 == 0:
         print(f"Episode {episode}: Total Reward = {total_reward:.2f}")
+    if episode % 500 == 0:
+        visualize_attempts_as_gif(positions, orientations, targets, episode)
 
 print("Training complete!")
