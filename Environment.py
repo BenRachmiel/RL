@@ -15,9 +15,14 @@ class SimpleEnvironment:
 
     def _randomize_positions(self):
         min_distance = 10.0
+        boundary_buffer = 10.0
         while True:
             self.position = np.random.uniform(0, self.area_size[0], size=2)
-            self.target = np.random.uniform(0, self.area_size[1], size=2)
+            self.target = np.random.uniform(
+                low=boundary_buffer,
+                high=self.area_size[0] - boundary_buffer,
+                size=2
+            )
             distance = np.linalg.norm(self.target - self.position)
             if distance >= min_distance:
                 break
@@ -37,6 +42,7 @@ class SimpleEnvironment:
         if self.done:
             self.reset()
             self.done = False
+
         # Continuous actions: action is a scalar indicating the angular change
         self.orientation += action * self.angular_velocity
 
@@ -50,13 +56,18 @@ class SimpleEnvironment:
         # Calculate the current distance to the target
         current_distance = np.linalg.norm(self.target - self.position)
 
-        # Determine the reward
-        if current_distance < 1:
-            reward = 10000  # Reward for reaching the target
-            self.done = True
-        elif current_distance < self.initial_distance:
-            reward = 30 - 0.1*(current_distance - min(50.0, self.initial_distance))  # Reward for getting closer to the target than initial distance
-        else:
-            reward = -30  # Penalty for getting farther from the target than initial distance
+        reward = 0
 
+        # Reward for reaching the target
+        if current_distance < 1:
+            reward += 100
+            self.done = True
+
+        improvement = self.initial_distance - current_distance
+        reward += improvement * 0.2
+
+        # Encourage straight movement
+        reward += 0.2 if not action else 0  # Action = 0 means going straight
+
+        self.initial_distance = current_distance
         return self.get_state(), reward, self.done

@@ -7,50 +7,50 @@ from datetime import datetime as dt
 from matplotlib.animation import FuncAnimation, PillowWriter
 
 
-def gif_visual(positions, orientations, targets, episode, save_dir="visualizations"):
+def visualize(positions, orientations, targets, episode, save_dir="visualizations"):
+    """
+    Visualizes the agent's path and saves the visualization as a static image with directionality arrows.
+
+    Parameters:
+    - positions: List of agent positions at each step.
+    - orientations: List of agent orientations at each step.
+    - targets: List of target positions.
+    - episode: The current episode number for labeling purposes.
+    - save_dir: The directory to save the image.
+    """
     os.makedirs(save_dir, exist_ok=True)
+
     timestamp = dt.now().strftime("%Y%m%d_%H%M%S")
-    gif_filename = os.path.join(save_dir, f"episode_{episode}_{timestamp}.gif")
+    image_filename = os.path.join(save_dir, f"episode_{episode}_{timestamp}.png")
 
     fig, ax = plt.subplots(figsize=(8, 8), dpi=100)
-    ax.set_xlim(-1, 100)
-    ax.set_ylim(-1, 100)
+    ax.set_xlim(-1, 101)
+    ax.set_ylim(-1, 101)
     ax.set_title(f'Episode {episode} - Agent Path')
     ax.set_xlabel('X position')
     ax.set_ylabel('Y position')
 
+    # Plot the entire path
+    x_data, y_data = zip(*positions)
+    ax.plot(x_data, y_data, 'bo-', linewidth=2, label='Agent Path')
+
+    # Plot the targets
     target_x, target_y = zip(*targets)
-    target_plot, = ax.plot(target_x[0], target_y[0], 'ro', label='Target')
+    ax.plot(target_x, target_y, 'ro', label='Target')
 
-    agent_path, = ax.plot([], [], 'bo-', label='Agent Path')
-    target_plot, = ax.plot([], [], 'ro', label='Target')
-    direction_arrow = None
-
-    def init():
-        agent_path.set_data([], [])
-        target_plot.set_data([], [])
-        return agent_path, target_plot
-
-    def update(frame):
-        x_data, y_data = zip(*positions[:frame + 1])
-        agent_path.set_data(x_data, y_data)
-
-        # Update target position - repeat the position to mimic sequence format
-        target_plot.set_data([targets[frame][0]], [targets[frame][1]])
-        nonlocal direction_arrow
-        if direction_arrow:
-            direction_arrow.remove()
-
-        pos = positions[frame]
-        orient = orientations[frame]
+    # Add arrows for directionality every few steps
+    for i in range(0, len(positions), 5):  # Adjust step size for arrows as needed
+        pos = positions[i]
+        orient = orientations[i]
         dx = 0.5 * np.cos(orient)
         dy = 0.5 * np.sin(orient)
-        direction_arrow = ax.arrow(pos[0], pos[1], dx, dy, head_width=2, head_length=2, fc='blue', ec='blue')
+        ax.arrow(pos[0], pos[1], dx, dy, head_width=2, head_length=1, fc='blue', ec='blue')
 
-        return agent_path, target_plot, direction_arrow
+    # Add a legend
+    ax.legend()
 
-    ani = FuncAnimation(
-        fig, update, frames=len(positions), init_func=init, blit=False, interval=100, repeat=False
-    )
-    ani.save(gif_filename, writer=PillowWriter(fps=5))
-    print(f"Visualization saved as {gif_filename}.")
+    # Save the plot as a PNG image
+    plt.savefig(image_filename)
+    plt.close(fig)
+
+    print(f"Visualization saved as {image_filename}.")

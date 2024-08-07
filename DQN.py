@@ -24,7 +24,7 @@ class DQN(nn.Module):
 
 class DQNAgent:
     def __init__(self, state_dim, action_dim, lr=0.001, gamma=0.99, epsilon=1.0, epsilon_decay=0.995, min_epsilon=0.1):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cpu")
         self.q_network = DQN(state_dim, action_dim).to(self.device)
         self.target_network = DQN(state_dim, action_dim).to(self.device)
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=lr)
@@ -68,7 +68,7 @@ class DQNAgent:
         next_q_values = self.target_network(next_states).max(1)[0]
         targets = rewards + (1 - dones) * self.gamma * next_q_values
 
-        loss = nn.MSELoss()(q_values, targets)
+        loss = nn.SmoothL1Loss()(q_values, targets)
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
